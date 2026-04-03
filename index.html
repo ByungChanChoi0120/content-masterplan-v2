@@ -1,0 +1,954 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>오픈클로 콘텐츠 마스터플랜 v2</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, sans-serif; background: #0a0a0a; color: #e0e0e0; line-height: 1.7; }
+
+  .slide { min-height: 100vh; padding: 60px 40px; display: flex; flex-direction: column; justify-content: center; max-width: 900px; margin: 0 auto; border-bottom: 1px solid #222; }
+
+  h1 { font-size: 2.8em; font-weight: 800; color: #fff; margin-bottom: 20px; letter-spacing: -1px; }
+  h2 { font-size: 2em; font-weight: 700; color: #fff; margin-bottom: 16px; letter-spacing: -0.5px; }
+  h3 { font-size: 1.4em; font-weight: 600; color: #ccc; margin-bottom: 12px; margin-top: 32px; }
+
+  p { font-size: 1.1em; color: #bbb; margin-bottom: 12px; }
+
+  .highlight { color: #4ecdc4; font-weight: 700; }
+  .red { color: #ff6b6b; }
+  .yellow { color: #ffd93d; }
+  .green { color: #6bcb77; }
+  .dim { color: #666; }
+
+  .big-number { font-size: 4em; font-weight: 900; color: #4ecdc4; line-height: 1; margin: 20px 0; }
+  .big-text { font-size: 1.8em; font-weight: 700; color: #fff; line-height: 1.4; margin: 20px 0; }
+
+  .quote { border-left: 4px solid #4ecdc4; padding: 20px 24px; margin: 24px 0; background: #111; border-radius: 0 8px 8px 0; font-size: 1.2em; color: #ddd; }
+
+  .bad { border-left: 4px solid #ff6b6b; padding: 12px 20px; margin: 12px 0; background: #1a0a0a; border-radius: 0 8px 8px 0; }
+  .good { border-left: 4px solid #6bcb77; padding: 12px 20px; margin: 12px 0; background: #0a1a0a; border-radius: 0 8px 8px 0; }
+
+  table { width: 100%; border-collapse: collapse; margin: 20px 0; }
+  th { background: #1a1a1a; color: #4ecdc4; padding: 12px 16px; text-align: left; font-weight: 600; border-bottom: 2px solid #333; }
+  td { padding: 12px 16px; border-bottom: 1px solid #222; color: #ccc; }
+  tr:hover { background: #111; }
+
+  .card { background: #111; border: 1px solid #222; border-radius: 12px; padding: 24px; margin: 16px 0; }
+  .card-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin: 20px 0; }
+
+  .tag { display: inline-block; background: #1a2a2a; color: #4ecdc4; padding: 4px 12px; border-radius: 20px; font-size: 0.85em; margin: 4px 4px 4px 0; }
+  .tag-red { background: #2a1a1a; color: #ff6b6b; }
+  .tag-yellow { background: #2a2a1a; color: #ffd93d; }
+  .tag-dim { background: #1a1a1a; color: #666; }
+
+  .timeline { position: relative; padding-left: 32px; }
+  .timeline::before { content: ''; position: absolute; left: 8px; top: 0; bottom: 0; width: 2px; background: #333; }
+  .timeline-item { position: relative; margin-bottom: 32px; }
+  .timeline-item::before { content: ''; position: absolute; left: -28px; top: 6px; width: 12px; height: 12px; border-radius: 50%; background: #4ecdc4; }
+  .timeline-item.future::before { background: #333; border: 2px solid #4ecdc4; }
+
+  .flow { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; margin: 20px 0; }
+  .flow-item { background: #111; border: 1px solid #333; border-radius: 8px; padding: 12px 20px; font-weight: 600; }
+  .flow-arrow { color: #4ecdc4; font-size: 1.4em; }
+
+  .checklist { list-style: none; }
+  .checklist li { padding: 8px 0; padding-left: 28px; position: relative; color: #bbb; }
+  .checklist li::before { content: '☐'; position: absolute; left: 0; color: #4ecdc4; }
+
+  .week-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 8px; margin: 20px 0; }
+  .week-day { background: #111; border: 1px solid #222; border-radius: 8px; padding: 12px; text-align: center; }
+  .week-day .day-label { font-size: 0.8em; color: #666; margin-bottom: 4px; }
+  .week-day .day-content { font-size: 0.9em; color: #ccc; }
+
+  .badge { display: inline-block; padding: 6px 16px; border-radius: 20px; font-size: 0.9em; font-weight: 700; margin-right: 8px; }
+  .badge-strong { background: #2a1a0a; color: #ff9944; border: 1px solid #ff9944; }
+  .badge-mid { background: #2a2a0a; color: #ffd93d; border: 1px solid #ffd93d; }
+  .badge-weak { background: #1a1a2a; color: #8888cc; border: 1px solid #555; }
+
+  .section-label { font-size: 0.8em; color: #4ecdc4; text-transform: uppercase; letter-spacing: 2px; margin-bottom: 8px; }
+
+  @media (max-width: 768px) {
+    .slide { padding: 40px 20px; }
+    h1 { font-size: 2em; }
+    h2 { font-size: 1.5em; }
+    .big-number { font-size: 2.5em; }
+    .big-text { font-size: 1.3em; }
+    .card-grid { grid-template-columns: 1fr; }
+    .week-grid { grid-template-columns: repeat(2, 1fr); }
+    .flow { flex-direction: column; }
+  }
+</style>
+</head>
+<body>
+
+<!-- 슬라이드 1: 타이틀 -->
+<div class="slide">
+  <p class="dim">2026년 4월~6월 | 콘텐츠 마스터플랜 v2 — 4/3 업데이트</p>
+  <h1>오픈클로<br>실사용자 <span class="highlight">500명</span> 확보</h1>
+  <p style="font-size: 1.3em; margin-top: 20px;">
+    "어떤 사람이 어떤 문제를 해결했는지" 사례를 쌓아서,<br>
+    <span class="highlight">누구한테 통하는지</span> 찾는다.
+  </p>
+  <div style="margin-top: 32px; display: flex; gap: 12px; flex-wrap: wrap;">
+    <span class="tag">4월 — 탐색</span>
+    <span class="tag tag-yellow">5월 — 집중</span>
+    <span class="tag" style="background:#0a2a0a; color:#6bcb77;">6월 — 전환</span>
+    <span class="tag tag-red">PMF 확인</span>
+  </div>
+</div>
+
+<!-- 슬라이드 2: 핵심 원칙 -->
+<div class="slide">
+  <p class="section-label">핵심 원칙</p>
+  <h2>파는 것의 본질</h2>
+  <p class="dim" style="margin-bottom: 32px;">기능이 아니라 결과를 판다</p>
+
+  <div class="bad">
+    <span class="red">X</span> "AI가 CS 답변해드려요"
+  </div>
+  <div class="good">
+    <span class="green">O</span> "기한 놓쳐서 배상금 물어본 적 있으세요? 다시는 안 물게 해드려요"
+  </div>
+  <div class="good">
+    <span class="green">O</span> "직원 나가면 이 업무 누가 해요?"
+  </div>
+  <div class="good">
+    <span class="green">O</span> "사장님이 '그거 했어?' 안 물어봐도 되는 회사"
+  </div>
+
+  <h3>콘텐츠 컨셉</h3>
+  <div class="card-grid">
+    <div class="card">
+      <h3 style="margin-top:0; font-size:1.1em;">뉴스레터 / 스레드</h3>
+      <p><span class="highlight">봇이 봇한테 인터뷰</span>하는 형태</p>
+      <p class="dim">뽀야가 뽀짝이한테 물어보는 구조</p>
+    </div>
+    <div class="card">
+      <h3 style="margin-top:0; font-size:1.1em;">인스타</h3>
+      <p>실제 작동하는 화면을 <span class="highlight">릴스</span>로 촬영</p>
+      <p class="dim">캡처가 아니라 움직이는 영상</p>
+    </div>
+  </div>
+
+  <div class="quote">
+    4월은 <strong>뽀짝이가 실제로 한 일 5가지</strong>가 콘텐츠.<br>
+    인터뷰 필요 없음. 이미 소재가 있다.
+  </div>
+
+  <h3>뽀짝이가 실제로 한 일 5가지</h3>
+  <table>
+    <tr><th>#</th><th>뽀짝이가 한 일</th><th>결과로 말하면</th></tr>
+    <tr><td>1</td><td>CS 자동 응답</td><td><span class="highlight">"아침 1시간이 5분으로 줄었습니다"</span></td></tr>
+    <tr><td>2</td><td>대량 발송</td><td><span class="highlight">"한마디면 200명한테 맞춤 문자가 나갑니다"</span></td></tr>
+    <tr><td>3</td><td>설문 → 리포트 자동</td><td><span class="highlight">"매주 반나절 걸리던 리포트가 새벽에 알아서 완성됩니다"</span></td></tr>
+    <tr><td>4</td><td>살아있는 문서화</td><td><span class="highlight">"신입이 물어보면 봇이 현행 정책 기준으로 답합니다"</span></td></tr>
+    <tr><td>5</td><td>일정 자동 트리거</td><td><span class="highlight">"까먹을 수 있는 일을 시스템이 기억합니다"</span></td></tr>
+  </table>
+</div>
+
+<!-- 슬라이드 3: 콘텐츠 원천 소스 맵 (NEW) -->
+<div class="slide">
+  <p class="section-label">NEW</p>
+  <h2>콘텐츠 원천 소스 맵</h2>
+  <p class="dim">OpenClaw-뽀짝이 콘텐츠의 4가지 원천과 각각의 산출물</p>
+
+  <table style="margin-top: 24px;">
+    <tr><th>원천 소스</th><th>콘텐츠 산출물</th><th>비고</th></tr>
+    <tr>
+      <td><strong>카톡방 DB</strong></td>
+      <td>일회성 콘텐츠 → 스레드 / 알면 좋은 장기 콘텐츠</td>
+      <td class="dim">1,500명 대화에서 반복 질문/페인포인트 추출</td>
+    </tr>
+    <tr>
+      <td><strong>회사 Slack</strong></td>
+      <td>봇끼리 대화 컨셉 / SEO 선점용 업데이트 에세이</td>
+      <td class="dim">뉴스레터·블로그 소재</td>
+    </tr>
+    <tr>
+      <td><strong>외부자료 (뉴스 등)</strong></td>
+      <td>실제 사용자 인터뷰 (<span class="highlight">최우선</span>)</td>
+      <td class="dim">크레딧 문제 주의</td>
+    </tr>
+    <tr>
+      <td><strong>에이전트 로그</strong></td>
+      <td>초보자용 가이드 문서 + 활용 예제 (<span class="highlight">무조건 필요</span>)</td>
+      <td class="dim">롱폼 → 숏폼 변환 가능</td>
+    </tr>
+  </table>
+
+  <h3>콘텐츠 유형 분류 6가지</h3>
+  <table>
+    <tr><th>유형</th><th>원천</th><th>형태</th><th>우선순위</th></tr>
+    <tr>
+      <td>실사용자 인터뷰</td>
+      <td>외부자료 + 토요일 세션</td>
+      <td>뉴스레터, 롱폼→숏폼, 릴스</td>
+      <td><span class="highlight" style="font-weight:700;">최우선</span></td>
+    </tr>
+    <tr>
+      <td>초보자 가이드 + 활용 예제</td>
+      <td>에이전트 로그</td>
+      <td>블로그, 가이드 문서, 숏폼</td>
+      <td><span class="yellow">높음</span></td>
+    </tr>
+    <tr>
+      <td>봇 인터뷰 (봇끼리 대화)</td>
+      <td>회사 Slack</td>
+      <td>뉴스레터, 스레드</td>
+      <td>중간</td>
+    </tr>
+    <tr>
+      <td>행사 후기</td>
+      <td>토요일 설치 세션 등</td>
+      <td>영상 (인스타, 유튜브) <span class="highlight">이게 우선</span> + 릴스</td>
+      <td><span class="yellow">높음</span></td>
+    </tr>
+    <tr>
+      <td>일회성 팁/FAQ</td>
+      <td>카톡방 DB</td>
+      <td>스레드, 카드뉴스</td>
+      <td>보통</td>
+    </tr>
+    <tr>
+      <td>SEO 에세이</td>
+      <td>회사 Slack 업데이트</td>
+      <td>블로그 (업데이트 노트 형태)</td>
+      <td class="dim">장기</td>
+    </tr>
+  </table>
+
+  <div class="card" style="margin-top: 8px; background: #0d1a1a;">
+    <p style="color:#ccc; margin:0;"><span class="highlight">영상 우선순위:</span> 인터뷰 숏폼 릴스 &gt; 행사 후기 영상 &gt; YouTube 롱폼 (세팅 되어야 함 — 4월 중순 예정)</p>
+  </div>
+</div>
+
+<!-- 슬라이드 4: 채널 전략 -->
+<div class="slide">
+  <p class="section-label">채널 전략</p>
+  <h2>채널 구성</h2>
+
+  <table style="margin-top: 24px;">
+    <tr><th>채널</th><th>주기</th><th>역할</th></tr>
+    <tr><td><strong>뉴스레터</strong> (스티비)</td><td>주 1회</td><td>뽀짝이 실제 사례 + 결과 숫자 (봇 인터뷰 형태)</td></tr>
+    <tr><td><strong>스레드</strong></td><td>주 5회</td><td>업종별 공감 + 문제별 공감 → 반응 테스트</td></tr>
+    <tr><td><strong>인스타</strong></td><td>주 2~3회</td><td>실제 화면 캡처 카드뉴스 / 릴스</td></tr>
+    <tr><td><strong>유튜브</strong></td><td>4월 중순~</td><td>웨비나 편집 롱폼 + 숏폼</td></tr>
+  </table>
+
+  <h3>뉴스레터 구조</h3>
+  <div class="card">
+    <p><span class="highlight">[1]</span> 공감 (3줄) — 특정 업종의 아침, "이거 당신 얘기 아닌가요?"</p>
+    <p><span class="highlight">[2]</span> 결과 (1줄 + 숫자) — "여기서는 이렇게 바꿨습니다. 1시간 → 5분."</p>
+    <p><span class="highlight">[3]</span> 실제 화면 (캡처 2~3장) — 뽀짝이가 실제로 한 과정</p>
+    <p><span class="highlight">[4]</span> 왜 되는지 (1줄) — "봇이 일하는 근거 = 정책 문서. 문서 고치면 봇이 바뀜."</p>
+    <p><span class="highlight">[5]</span> 이런 업종에서 특히 효과적 (리스트) — 세무사/프랜차이즈/D2C/병원/법무 등</p>
+    <p><span class="highlight">[6]</span> 질문 (1줄) — "당신 회사에서 가장 반복되는 업무는 뭔가요?" → 답장 유도 = PMF 데이터</p>
+  </div>
+</div>
+
+<!-- 슬라이드 5: 이번 주 우선순위 -->
+<div class="slide">
+  <p class="section-label">이번 주 우선순위 (3/31~4/5)</p>
+  <h2>P0 / P1 / P2</h2>
+  <p class="dim">4/3 office-hours 진단 반영 — 콘텐츠보다 "실사용자 파악 + 트래킹 체계"가 급선무</p>
+
+  <div class="card" style="border-color: #ff6b6b; margin-top: 28px;">
+    <span class="tag tag-red">P0 — 토요일 설치 세션</span>
+    <p style="font-size: 1.1em; font-weight: 700; color: #fff; margin-top: 12px;">실사용자 파악 — 이번 주 최우선</p>
+    <ul class="checklist" style="margin-top: 12px;">
+      <li>참여자 옆에서 직접 설치 과정 관찰 (어디서 막히는지 기록)</li>
+      <li>"설치했어요? 어떻게 쓰고 있어요?" 직접 물어보기</li>
+      <li>설치 완료한 사람: 업종, 어떤 업무에 쓰려는지 기록</li>
+      <li>설치 안 한 사람: 왜 안 했는지 (몰라서/필요 없어서/막혀서) 기록</li>
+      <li>핵심 데이터: 참여자 N명 중 설치 완료 N명, 실사용 N명</li>
+      <li>1:1 팔로업 연락선 확보 — 카톡 1:1 추가 또는 설치자 전용 소그룹방 개설</li>
+      <li>"다음 주에 한 번 여쭤볼게요" 미리 동의 받기</li>
+    </ul>
+  </div>
+
+  <div class="card" style="border-color: #ffd93d;">
+    <span class="tag tag-yellow">P1 — 금요일 회의</span>
+    <p style="font-size: 1.1em; font-weight: 700; color: #fff; margin-top: 12px;">트래킹 체계 확정</p>
+    <ul class="checklist" style="margin-top: 12px;">
+      <li>"실사용자" 정의 합의 (예: 설치 완료 + 1주 내 1회 이상 사용)</li>
+      <li>설치 수 트래킹 방법 확정 — 태현 대표와 대시보드/UTM</li>
+      <li>다혜님 소재 협조 범위</li>
+      <li>웨비나 참가자 이메일 리스트 확보</li>
+      <li>뉴스레터 발행 요일 확정</li>
+    </ul>
+  </div>
+
+  <div class="card" style="border-color: #4ecdc4;">
+    <span class="tag">P2 — 콘텐츠 세팅</span>
+    <p style="font-size: 1.1em; font-weight: 700; color: #fff; margin-top: 12px;">토요일 결과 나온 후 본격 착수</p>
+    <ul class="checklist" style="margin-top: 12px;">
+      <li>스티비 계정 + 발신자 인증 + 구독 폼</li>
+      <li>뉴스레터 템플릿 (텍스트 중심, 이미지 2~3장)</li>
+      <li>인스타 + 스레드 계정</li>
+      <li>UTM 링크</li>
+      <li>뽀짝이 실제 업무 5가지별 캡처 + 숫자 정리</li>
+      <li>카톡방 반복 질문 정리 (업종별 분류)</li>
+    </ul>
+  </div>
+</div>
+
+<!-- 슬라이드 6: 토요일 설치 세션 관찰 템플릿 -->
+<div class="slide">
+  <p class="section-label">도구</p>
+  <h2>토요일 설치 세션 관찰 템플릿</h2>
+  <p class="dim">참여자 1인당 1장씩 작성</p>
+
+  <h3>기본 정보</h3>
+  <table>
+    <tr><th>항목</th><th>기록</th></tr>
+    <tr><td>이름</td><td class="dim">　</td></tr>
+    <tr><td>업종/직무</td><td class="dim">　</td></tr>
+    <tr><td>오픈클로 어디서 알았는지</td><td class="dim">　</td></tr>
+    <tr><td>카톡 1:1 추가 동의</td><td class="dim">☐</td></tr>
+  </table>
+
+  <h3>설치 과정 관찰 (옆에서 보면서 기록)</h3>
+  <table>
+    <tr><th>단계</th><th>완료</th><th>막힌 점</th><th>소요 시간</th></tr>
+    <tr><td>1. 오픈클로 설치</td><td>☐</td><td class="dim">　</td><td class="dim">　</td></tr>
+    <tr><td>2. 텔레그램/슬랙 연동</td><td>☐</td><td class="dim">　</td><td class="dim">　</td></tr>
+    <tr><td>3. 첫 봇 세팅 (업무 가르치기)</td><td>☐</td><td class="dim">　</td><td class="dim">　</td></tr>
+    <tr><td>4. 첫 자동 응답 성공</td><td>☐</td><td class="dim">　</td><td class="dim">　</td></tr>
+  </table>
+
+  <h3>질문 (설치 도와주면서 자연스럽게)</h3>
+  <table>
+    <tr><th>순서</th><th>질문</th><th>답변 메모</th></tr>
+    <tr><td>1</td><td>이걸로 뭘 하고 싶어요? (어떤 업무?)</td><td class="dim">　</td></tr>
+    <tr><td>2</td><td>지금 그 업무를 어떻게 하고 있어요?</td><td class="dim">　</td></tr>
+    <tr><td>3</td><td>그거 하는 데 하루에 얼마나 걸려요?</td><td class="dim">　</td></tr>
+    <tr><td>4</td><td>(막혔을 때) 여기서 뭘 해야 할지 모르겠어요?</td><td class="dim">　</td></tr>
+    <tr><td>5</td><td>(완료 후) 이거 다음에 뭘 더 시키고 싶어요?</td><td class="dim">　</td></tr>
+  </table>
+
+  <h3>관찰 메모</h3>
+  <div class="card">
+    <p><span class="highlight">어디서 멈칫했나:</span> <span class="dim">　</span></p>
+    <p><span class="highlight">화면 어디를 봤나:</span> <span class="dim">　</span></p>
+    <p><span class="highlight">혼자 할 수 있었을까 (Y/N):</span> <span class="dim">　</span></p>
+    <p><span class="highlight">표정/반응 ("오!" vs "음..."):</span> <span class="dim">　</span></p>
+  </div>
+
+  <h3>팔로업 계획</h3>
+  <div class="card" style="background: #0d1a1a;">
+    <p>1주 후 DM 날짜: 4/ (화)</p>
+    <p>DM 내용: <span class="highlight">"지난주에 세팅하신 거 어떻게 쓰고 계세요?"</span></p>
+    <p>쓰고 있다 → <span class="green">"뭐에 쓰고 있어요?"</span> (= 콘텐츠 소재)</p>
+    <p>안 쓰고 있다 → <span class="red">"어디서 막혔어요?"</span> (= PMF 데이터)</p>
+  </div>
+</div>
+
+<!-- 슬라이드 7: 고객 인터뷰 질문 구조 -->
+<div class="slide">
+  <p class="section-label">인터뷰</p>
+  <h2>고객 인터뷰 질문 구조</h2>
+  <p class="dim">대면/DM 공통 — 7개 섹션</p>
+
+  <div class="card" style="margin-top: 24px;">
+    <p><span class="highlight">[1] 이 사람의 일 / 루틴</span></p>
+    <p class="dim" style="margin-bottom: 16px;">뭐 하는 사람인지, 하루가 어떻게 돌아가는지</p>
+
+    <p><span class="highlight">[2] 지금 제일 귀찮은 것</span> <span class="tag tag-red" style="font-size:0.75em;">그 사람 말 그대로 기록</span></p>
+    <p class="dim" style="margin-bottom: 16px;">페인포인트. 본인 표현 그대로 적기</p>
+
+    <p><span class="highlight">[3] 지금 어떻게 하고 있나?</span></p>
+    <p class="dim" style="margin-bottom: 16px;">현재 워크어라운드. 뭘 써봤고 왜 안 됐는지</p>
+
+    <p><span class="highlight">[4] 전환 계기 — 왜 여기까지 왔나?</span> <span class="tag tag-red" style="font-size:0.75em;">그 사람 말 그대로</span></p>
+    <p class="dim" style="margin-bottom: 16px;">오픈클로를 알게 된 경로 + 기대</p>
+
+    <p><span class="highlight">[5] 시간/비용 규모</span></p>
+    <p class="dim" style="margin-bottom: 16px;">하루 몇 시간 / 주 몇 시간 / 사람 뽑으면 얼마</p>
+
+    <p><span class="highlight">[6] 감정 키워드</span> <span class="tag tag-red" style="font-size:0.75em;">반복된 단어, 힘주는 표현</span></p>
+    <p class="dim" style="margin-bottom: 16px;">3번 이상 반복한 단어, 한숨, 자조, 흥분</p>
+
+    <p><span class="highlight">[7] 클로징 — 누구한테 어떻게 소개?</span></p>
+    <p class="dim">입소문 가능성 + 타겟 세그먼트 힌트</p>
+  </div>
+
+  <h3>페르소나 체크 & 온도 분류</h3>
+  <div class="card-grid">
+    <div class="card">
+      <p style="color: #ccc; font-weight: 600;">페르소나</p>
+      <p class="dim" style="margin-top: 8px;">A 비서형 입문자</p>
+      <p class="dim">B 자동화 추구형</p>
+      <p class="dim">C 환경 제약형</p>
+      <p class="dim">해당 없음</p>
+    </div>
+    <div class="card">
+      <p style="color: #ccc; font-weight: 600;">온도</p>
+      <p style="margin-top: 8px;"><span class="badge badge-strong">강함</span> 바로 타겟</p>
+      <p><span class="badge badge-mid">보통</span> 관심 높지만 블로커 있음</p>
+      <p><span class="badge badge-weak">약함</span> 타겟 아닐 수 있음</p>
+    </div>
+  </div>
+</div>
+
+<!-- 슬라이드 8: 인터뷰 예시 3명 -->
+<div class="slide">
+  <p class="section-label">인터뷰 예시</p>
+  <h2>Padlet 데이터 기반 페르소나 3명</h2>
+
+  <div class="card" style="border-color: #ff9944; margin-top: 24px;">
+    <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 16px;">
+      <span class="badge badge-strong">강함</span>
+      <span style="font-size: 1.1em; font-weight: 700; color: #fff;">왕차님 — 온라인 쇼핑몰 대표, 1인</span>
+    </div>
+    <table style="margin: 0;">
+      <tr><td style="color:#4ecdc4; width:140px;">[1] 일/루틴</td><td>의류 쇼핑몰 혼자 운영. 카톡 오픈채팅방 3개로 고객 응대. 아침에 알림 50개, 점심까지 답변만 하다 끝남</td></tr>
+      <tr><td style="color:#4ecdc4;">[2] 귀찮은 것</td><td>"같은 질문이 하루에 20번 와요. 사이즈 얼마예요, 배송 언제 되나요. 복붙하는 저를 보면서 '내가 봇이지' 싶더라고요"</td></tr>
+      <tr><td style="color:#4ecdc4;">[3] 현재 해결법</td><td>카톡 자동응답(한계) → ChatGPT 복붙(시간 똑같음) → "카카오가 API를 안 열어줘서 자동화를 못 해요"</td></tr>
+      <tr><td style="color:#4ecdc4;">[4] 전환 계기</td><td>"뽀짝이가 슬랙에서 CS 자동으로 하는 거 보고요, 아 저거 카톡에서 되면 진짜 인생이 바뀌겠다 싶었어요"</td></tr>
+      <tr><td style="color:#4ecdc4;">[5] 규모</td><td>하루 3~4시간 / 알바 뽑으면 월 150만원</td></tr>
+      <tr><td style="color:#4ecdc4;">[6] 감정</td><td>"같은 질문"(3번), "혼자서", 한숨 2번, "내가 봇이지"</td></tr>
+      <tr><td style="color:#4ecdc4;">[7] 소개</td><td>"혼자 쇼핑몰 하는 사람이요. '카톡 CS 자동으로 해주는 거 있어' 이러면 다 눈이 뒤집어질 겁니다"</td></tr>
+    </table>
+    <p style="margin-top: 12px; color: #ff9944; font-weight: 700;">A 비서형 입문자 / 강함 — 바로 타겟</p>
+  </div>
+
+  <div class="card" style="border-color: #ffd93d;">
+    <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 16px;">
+      <span class="badge badge-mid">보통</span>
+      <span style="font-size: 1.1em; font-weight: 700; color: #fff;">밀크군 — IT회사 PM, 5년차</span>
+    </div>
+    <table style="margin: 0;">
+      <tr><td style="color:#4ecdc4; width:140px;">[1] 일/루틴</td><td>B2B SaaS PM. 신입 교육, 고객 기술 문의 대응. 제품 설명을 매주 2~3번 반복</td></tr>
+      <tr><td style="color:#4ecdc4;">[2] 귀찮은 것</td><td>"같은 제품인데 물어보는 사람마다 설명을 처음부터 다시 해야 해요. 위키 만들어놨는데 아무도 안 읽어요"</td></tr>
+      <tr><td style="color:#4ecdc4;">[3] 현재 해결법</td><td>노션 위키(안 읽음) → 컨플루언스(검색 안 됨) → "제가 살아있는 위키예요 지금" (웃음)</td></tr>
+      <tr><td style="color:#4ecdc4;">[4] 전환 계기</td><td>"뽀짝이가 신입한테 온보딩 해주는 거 보고, 저거면 매번 설명 안 해도 되겠다. 근데 회사 VM에서 돌아가는지가 제일 궁금"</td></tr>
+      <tr><td style="color:#4ecdc4;">[5] 규모</td><td>하루 1시간 / 주 5~6시간</td></tr>
+      <tr><td style="color:#4ecdc4;">[6] 감정</td><td>"또 설명", "아무도 안 읽어요"(2번), "살아있는 위키"(자조적 웃음)</td></tr>
+      <tr><td style="color:#4ecdc4;">[7] 소개</td><td>"PM이나 기술지원 하는 분들. '노션 위키 아무도 안 읽지? 대신 답해주는 봇 있어' 이러면 관심 가질 듯"</td></tr>
+    </table>
+    <p style="margin-top: 12px; color: #ffd93d; font-weight: 700;">B 자동화 추구형 + C 환경 제약형 / 보통 — 관심 높지만 회사 환경이 블로커</p>
+  </div>
+
+  <div class="card" style="border-color: #444;">
+    <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 16px;">
+      <span class="badge badge-weak">약함</span>
+      <span style="font-size: 1.1em; font-weight: 700; color: #fff;">여름비소리 — 대학원생, AI 전공</span>
+    </div>
+    <table style="margin: 0;">
+      <tr><td style="color:#4ecdc4; width:140px;">[1] 일/루틴</td><td>석사과정. 논문, 실험, 코딩. 반복 업무 없음</td></tr>
+      <tr><td style="color:#4ecdc4;">[2] 귀찮은 것</td><td>"딱히 귀찮은 건 없는데... 에이전트 구조가 어떻게 되는지 공부하고 싶어서 왔어요"</td></tr>
+      <tr><td style="color:#4ecdc4;">[3] 현재 해결법</td><td>Claude Pro 개인 사용. 자동화할 업무 없음</td></tr>
+      <tr><td style="color:#4ecdc4;">[4] 전환 계기</td><td>"멀티 에이전트 아키텍처가 요즘 핫해서. 논문에서만 보던 걸 실제로 어떻게 쓰는지 보고 싶었어요"</td></tr>
+      <tr><td style="color:#4ecdc4;">[5] 규모</td><td>해당 없음 (학습 목적)</td></tr>
+      <tr><td style="color:#4ecdc4;">[6] 감정</td><td>"공부", "구조", "아키텍처" — 기술 호기심. 페인포인트 없음</td></tr>
+      <tr><td style="color:#4ecdc4;">[7] 소개</td><td>"연구실 동기? 근데 걔도 그냥 논문으로 볼 것 같긴 해요"</td></tr>
+    </table>
+    <p style="margin-top: 12px; color: #666; font-weight: 700;">해당 없음 / 약함 — 타겟 고객 아님</p>
+  </div>
+
+  <div class="quote">
+    토요일 목표: 참여자를 강함/보통/약함으로 분류.<br>
+    <strong>강함이 3명 이상이면 PMF 신호.</strong> 강함 사람의 [2]번 답변 = 5월 콘텐츠의 진짜 소재.
+  </div>
+</div>
+
+<!-- 슬라이드 9: 4월 콘텐츠 계획 -->
+<div class="slide">
+  <p class="section-label">4월 계획</p>
+  <h2>4월 콘텐츠 계획</h2>
+  <p class="dim">뽀짝이 실제 업무 5가지가 콘텐츠 + 고객 인터뷰 병행</p>
+
+  <h3>뉴스레터 W1~W4</h3>
+  <table>
+    <tr><th>주차</th><th>발행일</th><th>PMF 사례</th><th>결과로 말하면</th></tr>
+    <tr><td><strong>W1</strong></td><td>4/6</td><td>CS 자동 응답</td><td>"아침 15건 문의. <span class="highlight">1시간 → 5분</span>"</td></tr>
+    <tr><td><strong>W2</strong></td><td>4/13</td><td>대량 발송</td><td>"200명한테 맞춤 문자. <span class="highlight">2시간 → 한마디</span>"</td></tr>
+    <tr><td><strong>W3</strong></td><td>4/20</td><td>인수인계</td><td>"<span class="highlight">직원이 퇴사해도</span> 업무가 안 멈춥니다"</td></tr>
+    <tr><td><strong>W4</strong></td><td>4/27</td><td>기한/리마인드</td><td>"<span class="highlight">깜빡해서 못 한 일</span>이 사라지는 구조"</td></tr>
+  </table>
+  <p class="dim">→ 설문 결과에 따라 순서 조정</p>
+
+  <h3>스레드 — 주 5회</h3>
+  <div class="week-grid">
+    <div class="week-day">
+      <div class="day-label">월</div>
+      <div class="day-content"><strong>문제 공감</strong><br><span class="dim">"같은 질문 하루 20번"</span></div>
+    </div>
+    <div class="week-day">
+      <div class="day-label">화</div>
+      <div class="day-content"><strong>업종 공감</strong><br><span class="dim">세무/법무</span></div>
+    </div>
+    <div class="week-day">
+      <div class="day-label">수</div>
+      <div class="day-content"><strong>결과 숫자</strong><br><span class="dim">"200건 → 0건"</span></div>
+    </div>
+    <div class="week-day">
+      <div class="day-label">목</div>
+      <div class="day-content"><strong>업종 공감</strong><br><span class="dim">프랜차이즈/병원</span></div>
+    </div>
+    <div class="week-day">
+      <div class="day-label">금</div>
+      <div class="day-content"><strong>뉴스레터 링크</strong><br><span class="dim">구독 유도 1번만</span></div>
+    </div>
+  </div>
+
+  <h3>인스타 릴스 구조 (30~60초)</h3>
+  <div class="card">
+    <p><span class="highlight">0~5초</span> 후킹 자막 — "아침 문의 15건, 5분에 끝냈습니다"</p>
+    <p><span class="highlight">5~10초</span> 공감 — "매일 아침 같은 질문에 복붙하고 계시죠?"</p>
+    <p><span class="highlight">10~45초</span> 실제 화면 녹화 — 뽀짝이가 처리하는 과정이 움직이는 영상</p>
+    <p><span class="highlight">45~55초</span> 결과 — "1시간 → 5분"</p>
+    <p><span class="highlight">55~60초</span> CTA — "매주 이런 사례 → 뉴스레터 링크 바이오"</p>
+  </div>
+</div>
+
+<!-- 슬라이드 10: 4월 인터뷰 트랙 -->
+<div class="slide">
+  <p class="section-label">두 트랙 병행</p>
+  <h2>4월 인터뷰 트랙</h2>
+  <p class="dim">콘텐츠(기존 계획 유지) + PMF 검증(고객 인터뷰/팔로업)</p>
+
+  <table style="margin-top: 24px;">
+    <tr><th></th><th>4월 (탐색)</th><th>5월~ (본격)</th></tr>
+    <tr><td><strong>형태</strong></td><td>카톡 DM / 오프라인 대화</td><td>줌 30~40분</td></tr>
+    <tr><td><strong>질문 수</strong></td><td>3~5개</td><td>9개 (고객 여정 전체)</td></tr>
+    <tr><td><strong>목적</strong></td><td>"쓰고 있나? 왜/왜 안?"</td><td>"어떻게 바뀌었나? 숫자로"</td></tr>
+    <tr><td><strong>산출물</strong></td><td>구글 시트 기록</td><td>뉴스레터+스레드+인스타+숏폼+사례글</td></tr>
+  </table>
+
+  <h3>4월 인터뷰 대상 스케줄</h3>
+  <div class="timeline" style="margin-top: 24px;">
+    <div class="timeline-item">
+      <h3 style="margin-top: 0; color: #4ecdc4; font-size: 1.1em;">W1 (4/5) — 토요일 설치 세션</h3>
+      <p class="dim">설치 관찰 + 질문 (직접 옆에서)</p>
+    </div>
+    <div class="timeline-item">
+      <h3 style="margin-top: 0; color: #4ecdc4; font-size: 1.1em;">W2 (4/8~) — 설치자 1:1 팔로업 DM</h3>
+      <p class="dim">쓰고 있는지, 어디서 막혔는지</p>
+    </div>
+    <div class="timeline-item future">
+      <h3 style="margin-top: 0; color: #ffd93d; font-size: 1.1em;">W3~W4 — 심층 인터뷰 1~2명</h3>
+      <p class="dim">실사용 확인된 사람 대상</p>
+    </div>
+  </div>
+</div>
+
+<!-- 슬라이드 11: 업종별 공감 -->
+<div class="slide">
+  <p class="section-label">타겟 전략</p>
+  <h2>업종별 공감 — 같은 사례, 공감만 바꾼다</h2>
+  <p class="dim">CS 자동 응답 하나를 업종별로 쏴서 반응을 본다</p>
+
+  <table style="margin-top: 24px;">
+    <tr><th>업종</th><th>공감 도입</th><th>같은 사례</th></tr>
+    <tr>
+      <td><span class="tag">세무사</span></td>
+      <td>"1월마다 연말정산 자료 안 보내는 고객사 100곳에 하나하나 카톡"</td>
+      <td class="dim">→ 뽀짝이 CS 자동 응답</td>
+    </tr>
+    <tr>
+      <td><span class="tag">프랜차이즈</span></td>
+      <td>"점주 47명이 같은 걸 물어봅니다"</td>
+      <td class="dim">→ 뽀짝이 CS 자동 응답</td>
+    </tr>
+    <tr>
+      <td><span class="tag">D2C</span></td>
+      <td>"밤 10시에 또 CS 카톡이 왔습니다"</td>
+      <td class="dim">→ 뽀짝이 CS 자동 응답</td>
+    </tr>
+    <tr>
+      <td><span class="tag">병원</span></td>
+      <td>"시술 후 관리 안내를 환자마다 다르게 보내야 합니다"</td>
+      <td class="dim">→ 뽀짝이 맞춤 발송</td>
+    </tr>
+  </table>
+
+  <div class="quote">
+    스레드에서 업종별 공감을 쏘고, <strong>어떤 업종이 반응하는지</strong> 본다.<br>
+    댓글에서 반응 업종 = PMF 데이터
+  </div>
+</div>
+
+<!-- 슬라이드 12: 4월 판단 기준 -->
+<div class="slide">
+  <p class="section-label">판단 기준</p>
+  <h2>4월 판단 기준</h2>
+
+  <h3>"반응 좋다"의 정의</h3>
+  <table>
+    <tr><th>지표</th><th><span class="green">좋다</span></th><th><span class="red">별로</span></th></tr>
+    <tr><td>뉴스레터 오픈율</td><td class="green">40%+</td><td class="red">20% 미만</td></tr>
+    <tr><td>스레드 댓글</td><td class="green">3개+</td><td class="red">0~1개</td></tr>
+    <tr><td>인스타 저장</td><td class="green">10개+</td><td class="red">2개 미만</td></tr>
+    <tr><td>"어떻게 해요?" DM/댓글</td><td class="green">1개 = 강한 신호</td><td class="dim">-</td></tr>
+    <tr><td>뉴스레터 답장</td><td class="green">1개 = 매우 강한 신호</td><td class="dim">-</td></tr>
+  </table>
+
+  <h3>두 가지를 동시에 본다</h3>
+  <div class="card-grid">
+    <div class="card">
+      <p class="highlight" style="font-weight: 700;">어떤 문제에 반응하나?</p>
+      <p class="dim">뉴스레터 4편 오픈율/클릭 비교</p>
+    </div>
+    <div class="card">
+      <p class="highlight" style="font-weight: 700;">어떤 업종이 반응하나?</p>
+      <p class="dim">스레드 댓글 + 뉴스레터 답장 업종 분류</p>
+    </div>
+  </div>
+
+  <h3>4주 후 결정 매트릭스</h3>
+  <table>
+    <tr><th>결과</th><th>행동</th></tr>
+    <tr><td>특정 문제 + 특정 업종이 확실히 반응</td><td><span class="highlight">해당 조합으로 5월 올인</span></td></tr>
+    <tr><td>문제는 확실한데 업종은 안 갈림</td><td>5월에 업종 공감을 더 세분화해서 테스트</td></tr>
+    <tr><td>"기한 관리" 반응이 강함</td><td><span class="yellow">세무/법무/요양 타겟으로 집중 전환</span></td></tr>
+    <tr><td>전부 반응 없음</td><td class="red">카톡방에 직접 "뭐가 궁금하세요?" 물어보기</td></tr>
+  </table>
+</div>
+
+<!-- 슬라이드 13: 리텐션 허들 -->
+<div class="slide">
+  <p class="section-label">4/3 autoplan 진단 추가</p>
+  <h2>리텐션 허들</h2>
+  <p class="dim">설치 ≠ 사용. 실사용자가 되려면 아래 허들을 넘어야 한다.</p>
+
+  <h3>유저 퍼널 (실제)</h3>
+  <div class="flow" style="margin-top: 16px; flex-wrap: wrap;">
+    <div class="flow-item">인지</div>
+    <span class="flow-arrow">→</span>
+    <div class="flow-item">설치</div>
+    <span class="flow-arrow">→</span>
+    <div class="flow-item">텔레그램/슬랙 연동</div>
+    <span class="flow-arrow">→</span>
+    <div class="flow-item">첫 자동 응답 성공</div>
+    <span class="flow-arrow">→</span>
+    <div class="flow-item" style="border-color: #ff6b6b;">봇 레벨업</div>
+    <span class="flow-arrow">→</span>
+    <div class="flow-item" style="border-color: #4ecdc4;">재사용 (=실사용자)</div>
+  </div>
+
+  <div class="card-grid" style="margin-top: 24px;">
+    <div class="card" style="border-color: #ff6b6b;">
+      <span class="tag tag-red">벽 1</span>
+      <p style="font-size: 1.2em; font-weight: 700; color: #fff; margin-top: 10px;">설정이 복잡하다</p>
+      <p class="dim">봇에게 업무를 가르치는 과정 (문서 작성, 프롬프트 등)</p>
+    </div>
+    <div class="card" style="border-color: #ff6b6b;">
+      <span class="tag tag-red">벽 2</span>
+      <p style="font-size: 1.2em; font-weight: 700; color: #fff; margin-top: 10px;">API 비용 부담</p>
+      <p class="dim">사용량이 늘면 비용이 올라간다</p>
+    </div>
+  </div>
+
+  <h3>허들별 대응 방안</h3>
+  <table>
+    <tr><th>허들</th><th>문제</th><th>대응 방안</th><th>담당</th></tr>
+    <tr><td>설치 → 연동</td><td>혼자 하기 어려움</td><td>토요일 관찰 후 온보딩 가이드 개선</td><td>병찬+다혜</td></tr>
+    <tr><td>봇 레벨업 (설정)</td><td>업무 가르치는 과정 복잡</td><td>업종별 템플릿/프리셋 제공 검토</td><td>태현 대표 논의</td></tr>
+    <tr><td>봇 레벨업 (비용)</td><td>API 사용량 증가 → 비용 부담</td><td>무료 티어/체험 기간 or 비용 구조 명시</td><td>태현 대표 논의</td></tr>
+    <tr><td>첫 성공 → 재사용</td><td>"한 번 해봤는데 그 다음 뭐 하지?"</td><td>1주차 팔로업 DM으로 다음 활용 안내</td><td>병찬</td></tr>
+  </table>
+</div>
+
+<!-- 슬라이드 14: 5월 계획 -->
+<div class="slide">
+  <p class="section-label">5월</p>
+  <h2>5월 — 반응 좋은 곳 집중 + 인터뷰 본격화</h2>
+
+  <div class="card-grid" style="margin-top: 24px;">
+    <div class="card">
+      <p class="highlight" style="font-weight: 700;">뉴스레터</p>
+      <p class="dim" style="margin-top: 8px;">반응 좋은 PMF 사례 더 깊게 (심화편)</p>
+      <p class="dim">반응 좋은 업종의 구체적 상황으로 공감 도입 변경</p>
+      <p class="dim">후반부터 실사용자 인터뷰 기반 콘텐츠 시작</p>
+    </div>
+    <div class="card">
+      <p class="highlight" style="font-weight: 700;">인터뷰 주 1회</p>
+      <p class="dim" style="margin-top: 8px;">줌 30~40분</p>
+      <p class="dim">1회 인터뷰 → 콘텐츠 5개 산출</p>
+      <p class="dim">인터뷰이 = 이탈 안 함. 커뮤니티에 남음.</p>
+    </div>
+  </div>
+
+  <h3>5월 주간 루틴</h3>
+  <table>
+    <tr><th>요일</th><th>병찬</th><th>봇</th></tr>
+    <tr><td>월</td><td>주간 방향 잡기</td><td>시고르: 스레드 5개 초안</td></tr>
+    <tr><td>화</td><td>스레드 검토(30분) + 인터뷰 1회</td><td>-</td></tr>
+    <tr><td>수</td><td>편집 + 인스타 카드</td><td>뽀야: 뉴스레터 초안</td></tr>
+    <tr><td>목</td><td>뉴스레터 검토 + 발행</td><td>-</td></tr>
+    <tr><td>금</td><td>반응 데이터 확인 + 다음 주 방향</td><td>시고르: 주간 데이터 정리</td></tr>
+  </table>
+
+  <h3>인터뷰 인센티브</h3>
+  <table>
+    <tr><th>인센티브</th><th>왜 참여하나</th></tr>
+    <tr><td>뉴스레터/유튜브에 사례 노출</td><td>본인 회사/브랜드 홍보</td></tr>
+    <tr><td>1:1 세팅 컨설팅 30분</td><td>실질적 도움</td></tr>
+    <tr><td>서재 프리미엄 콘텐츠 열람권</td><td>잠금 콘텐츠 접근</td></tr>
+    <tr><td>커뮤니티 "인터뷰이" 뱃지</td><td>소속감 + 지위</td></tr>
+    <tr><td>오픈클로 팀 직접 피드백 채널</td><td>제품 개선에 목소리</td></tr>
+  </table>
+</div>
+
+<!-- 슬라이드 15: 인터뷰 산출물 -->
+<div class="slide">
+  <p class="section-label">레버리지</p>
+  <h2>인터뷰 1회 → 산출물 5개</h2>
+
+  <div class="flow" style="justify-content: center; margin-top: 32px; flex-wrap: wrap;">
+    <div class="flow-item" style="text-align: center;">
+      <div style="font-size: 0.8em; color: #4ecdc4; margin-bottom: 4px;">INPUT</div>
+      줌 30~40분
+    </div>
+    <span class="flow-arrow">→</span>
+    <div class="flow-item">뉴스레터 1편</div>
+    <span class="flow-arrow" style="color: #666;">+</span>
+    <div class="flow-item">스레드 2~3개</div>
+    <span class="flow-arrow" style="color: #666;">+</span>
+    <div class="flow-item">인스타 카드 1세트</div>
+    <span class="flow-arrow" style="color: #666;">+</span>
+    <div class="flow-item">숏폼 3~5개</div>
+    <span class="flow-arrow" style="color: #666;">+</span>
+    <div class="flow-item">사례글 1편</div>
+  </div>
+
+  <div class="quote" style="margin-top: 40px;">
+    인터뷰이 = 이탈 안 함.<br>
+    사례 공개한 사람은 커뮤니티에 남는다.
+  </div>
+
+  <h3>5월 인터뷰 질문 (고객의 여정)</h3>
+  <div class="card">
+    <p><span class="dim">1.</span> 어떤 일 하세요? 하루가 어떻게 돌아가요?</p>
+    <p><span class="dim">2.</span> 가장 시간 많이 잡아먹는 일이 뭐예요?</p>
+    <p><span class="dim">3.</span> "이건 누가 좀 대신해줬으면" 하는 일이 있었어요?</p>
+    <p><span class="dim">4.</span> 전에는 어떻게 해결하려고 했어요? 왜 안 됐어요?</p>
+    <p><span class="dim">5.</span> 그래서 어떻게 하게 됐어요?</p>
+    <p><span class="dim">6.</span> 처음에 어디서 막혔어요?</p>
+    <p><span class="dim">7.</span> 지금은 어떻게 됐어요? <span class="highlight">숫자로 말하면?</span></p>
+    <p><span class="dim">8.</span> 안 되는 것도 있었죠?</p>
+    <p><span class="dim">9.</span> "이건 알고 시작해"라고 할 게 있다면?</p>
+  </div>
+</div>
+
+<!-- 슬라이드 16: 6월 플라이휠 -->
+<div class="slide">
+  <p class="section-label">6월</p>
+  <h2>6월 — "나도 업무에서 해방되고 싶다"</h2>
+
+  <div class="big-text" style="text-align: center; margin: 40px 0;">
+    4~5월: "이렇게 쓰고 있습니다" (관심)<br>
+    <span class="highlight">6월: "당신도 이렇게 할 수 있습니다" (행동)</span>
+  </div>
+
+  <h3>플라이휠</h3>
+  <div class="flow" style="justify-content: center; margin-top: 24px; flex-wrap: wrap;">
+    <div class="flow-item">뽀짝이 사례 (4월)</div>
+    <span class="flow-arrow">→</span>
+    <div class="flow-item">"나도 하고 싶다" (5월)</div>
+    <span class="flow-arrow">→</span>
+    <div class="flow-item">설치 (6월)</div>
+    <span class="flow-arrow">→</span>
+    <div class="flow-item">본인도 사례가 됨</div>
+    <span class="flow-arrow">→</span>
+    <div class="flow-item" style="border-color: #4ecdc4;">순환</div>
+  </div>
+
+  <table style="margin-top: 40px;">
+    <tr><th>콘텐츠</th><th>역할</th></tr>
+    <tr><td>"이 사람처럼 따라하기" 가이드</td><td>설치 → 첫 세팅까지 재현</td></tr>
+    <tr><td>"이렇게 하면 안 됩니다" 실패 모음</td><td>시행착오 줄이기</td></tr>
+    <tr><td>업종 특화 사례</td><td>세무사/법무/요양 등 반응 좋은 업종</td></tr>
+    <tr><td>"나도 인터뷰 받고 싶다" 프로그램</td><td>에이전트 1개+ 운영자 대상</td></tr>
+  </table>
+</div>
+
+<!-- 슬라이드 17: 3개월 요약 -->
+<div class="slide">
+  <p class="section-label">전체 요약</p>
+  <h2>3개월 요약</h2>
+
+  <table style="margin-top: 24px;">
+    <tr><th>월</th><th>콘텐츠 소재</th><th>뉴스레터</th><th>스레드</th><th>핵심 질문</th></tr>
+    <tr>
+      <td><strong style="color: #4ecdc4;">4월</strong></td>
+      <td>뽀짝이 실제 업무 5가지</td>
+      <td>주 1회 (사례+결과)</td>
+      <td>주 5회 (업종별+문제별)</td>
+      <td>어떤 문제/업종에 반응하나?</td>
+    </tr>
+    <tr>
+      <td><strong style="color: #ffd93d;">5월</strong></td>
+      <td>반응 좋은 사례 심화 + 인터뷰</td>
+      <td>주 1회 (심화+인터뷰)</td>
+      <td>주 5회 (집중)</td>
+      <td>누가 "나도 하고 싶다" 하나?</td>
+    </tr>
+    <tr>
+      <td><strong style="color: #6bcb77;">6월</strong></td>
+      <td>사례 축적 + 따라하기 가이드</td>
+      <td>주 1회 (전환)</td>
+      <td>주 5회</td>
+      <td>플라이휠이 도나?</td>
+    </tr>
+  </table>
+
+  <div class="timeline" style="margin-top: 40px;">
+    <div class="timeline-item">
+      <h3 style="margin-top: 0; color: #4ecdc4;">4월 — 탐색</h3>
+      <p>뽀짝이 실제 업무 5가지가 콘텐츠. 인터뷰 병행 시작.</p>
+      <div style="margin-top: 8px;">
+        <span class="tag">뉴스레터 주1회</span>
+        <span class="tag">스레드 주5회</span>
+        <span class="tag">릴스 주2~3회</span>
+      </div>
+    </div>
+    <div class="timeline-item future">
+      <h3 style="margin-top: 0; color: #ffd93d;">5월 — 집중</h3>
+      <p>반응 좋은 사례 심화 + 인터뷰 본격화 (주 1회)</p>
+      <div style="margin-top: 8px;">
+        <span class="tag tag-yellow">인터뷰 주1회</span>
+        <span class="tag tag-yellow">1회 → 콘텐츠 5개</span>
+      </div>
+    </div>
+    <div class="timeline-item future">
+      <h3 style="margin-top: 0; color: #6bcb77;">6월 — 전환</h3>
+      <p>사례 축적 + "당신도 이렇게 할 수 있습니다"</p>
+      <div style="margin-top: 8px;">
+        <span class="tag" style="background:#0a2a0a; color:#6bcb77;">따라하기 가이드</span>
+        <span class="tag" style="background:#0a2a0a; color:#6bcb77;">플라이휠 가동</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- 슬라이드 18: 3개월 목표 -->
+<div class="slide">
+  <p class="section-label">목표</p>
+  <h2>3개월 목표</h2>
+
+  <div class="big-number">500</div>
+  <p class="dim">6월 말 실사용자 목표</p>
+
+  <table style="margin-top: 32px;">
+    <tr><th>지표</th><th>4월</th><th>5월</th><th>6월</th></tr>
+    <tr>
+      <td><strong>뉴스레터 구독자</strong></td>
+      <td>기준선</td>
+      <td class="yellow">200명</td>
+      <td class="green">500명</td>
+    </tr>
+    <tr>
+      <td><strong>실사용자 누적</strong></td>
+      <td>100~150명</td>
+      <td class="yellow">250~350명</td>
+      <td class="green">400~550명</td>
+    </tr>
+    <tr>
+      <td><strong>PMF 확정</strong></td>
+      <td>문제 5개 중 1~2개</td>
+      <td class="yellow">업종 2~3개</td>
+      <td class="green">1~2개 확정</td>
+    </tr>
+  </table>
+</div>
+
+<!-- 슬라이드 19: 측정 -->
+<div class="slide">
+  <p class="section-label">측정</p>
+  <h2>측정 지표</h2>
+
+  <h3>주간 지표</h3>
+  <table>
+    <tr><th>지표</th><th>도구</th></tr>
+    <tr><td>뉴스레터 오픈율/클릭률</td><td>스티비</td></tr>
+    <tr><td>뉴스레터 답장 (업종 분류)</td><td>직접</td></tr>
+    <tr><td>스레드 댓글 (업종별, 문제별)</td><td>수동</td></tr>
+    <tr><td>인스타 저장/공유</td><td>인사이트</td></tr>
+    <tr><td>"어떻게 해요?" DM 수</td><td>수동</td></tr>
+  </table>
+
+  <h3>3개월 목표 트래킹</h3>
+  <table>
+    <tr><th>지표</th><th>4월</th><th>5월</th><th>6월</th></tr>
+    <tr><td><strong>뉴스레터 구독자</strong></td><td>기준선</td><td class="yellow">200명</td><td class="green">500명</td></tr>
+    <tr><td><strong>실사용자 누적</strong></td><td>100~150명</td><td class="yellow">250~350명</td><td class="green">400~550명</td></tr>
+    <tr><td><strong>PMF 확정</strong></td><td>문제 5개 중 1~2개</td><td class="yellow">업종 2~3개</td><td class="green">1~2개 확정</td></tr>
+  </table>
+
+  <div class="card" style="background: #0d1a1a; margin-top: 8px;">
+    <p style="color: #ccc; margin: 0;">현재 확인된 외부 실사용자 수: <span class="red" style="font-weight:700;">미파악 (트래킹 없음)</span> — 금요일 회의에서 확정 필요</p>
+  </div>
+</div>
+
+<!-- 슬라이드 20: 역할 분담 -->
+<div class="slide">
+  <p class="section-label">팀</p>
+  <h2>역할 분담</h2>
+
+  <table style="margin-top: 24px;">
+    <tr><th>업무</th><th>누가</th></tr>
+    <tr><td>뉴스레터 초안</td><td>뽀야/시고르 → 병찬 확인</td></tr>
+    <tr><td>스레드 초안 (월요일 5개 배치)</td><td>시고르 → 병찬 30분 검토</td></tr>
+    <tr><td>인스타 카드뉴스</td><td>병찬 (Canva)</td></tr>
+    <tr><td>인터뷰 (4월~ 병행)</td><td>병찬</td></tr>
+    <tr><td>유튜브 편집</td><td>병찬 (캡컷)</td></tr>
+    <tr><td>봇 업무 기록/캡처</td><td>다혜님</td></tr>
+    <tr><td>채널 분석</td><td>소연님</td></tr>
+  </table>
+
+  <div class="card" style="margin-top: 24px; background: #0d1a0d;">
+    <p style="color: #6bcb77; font-weight: 700;">인터뷰 4월~ 병행 (기존 5월에서 앞당김)</p>
+    <p class="dim">토요일 설치 세션부터 관찰 형태의 인터뷰 시작.</p>
+    <p class="dim">5월 본격 인터뷰(줌 30~40분)로 전환 전에 데이터 확보.</p>
+  </div>
+</div>
+
+<!-- 슬라이드 21: 실패 대응 -->
+<div class="slide">
+  <p class="section-label">리스크 관리</p>
+  <h2>실패 시 대응</h2>
+
+  <table style="margin-top: 24px;">
+    <tr><th>시나리오</th><th>대응</th></tr>
+    <tr><td>특정 문제만 반응</td><td>해당 문제 <span class="highlight">올인</span></td></tr>
+    <tr><td>특정 업종만 반응</td><td>해당 업종 <span class="highlight">올인</span></td></tr>
+    <tr><td>"기한 관리" 반응 강함</td><td><span class="yellow">세무/법무/요양으로 집중 전환</span></td></tr>
+    <tr><td>오픈율 높은데 클릭 안 됨</td><td>CTA 변경</td></tr>
+    <tr><td>오픈율 자체 낮음</td><td>제목을 "결과"로 바꿔보기</td></tr>
+    <tr><td>전부 반응 없음</td><td>카톡방에 직접 물어보기</td></tr>
+    <tr><td>인터뷰 대상 안 잡힘</td><td>인센티브 강화 + 다혜님 네트워크</td></tr>
+    <tr><td><strong>설치는 하는데 연동에서 이탈</strong></td><td><span class="red">온보딩 가이드 개선 + 1:1 세팅 지원</span></td></tr>
+    <tr><td><strong>연동까지 했는데 레벨업 포기</strong></td><td><span class="red">업종별 템플릿/프리셋 우선 개발</span></td></tr>
+    <tr><td><strong>비용 때문에 이탈</strong></td><td><span class="red">무료 체험 기간 or 비용 상한 설정</span></td></tr>
+  </table>
+
+  <p class="dim" style="margin-top: 16px;">아래 3개 항목은 4/3 autoplan 진단에서 추가됨</p>
+</div>
+
+<!-- 슬라이드 22: 마무리 -->
+<div class="slide" style="text-align: center;">
+  <p class="dim">오픈클로 콘텐츠 마스터플랜 v2 | 4/3 업데이트</p>
+  <div class="big-text" style="margin: 40px 0;">
+    기능을 팔지 않는다.<br>
+    <span class="highlight">결과를 보여준다.</span>
+  </div>
+  <p style="font-size: 1.2em; color: #888;">
+    "사람에게 붙어있던 프로세스를 시스템에 붙이는 것"<br>
+    그걸 본 사람이 "나도 해방되고 싶다"고 말하게 만드는 것.
+  </p>
+  <p style="margin-top: 40px; color: #555;">
+    4/6 첫 발행 | 4월 PMF 확인 + 콘텐츠 병행 | 3개월 뒤 500명
+  </p>
+  <div style="margin-top: 40px; display: flex; justify-content: center; gap: 12px; flex-wrap: wrap;">
+    <span class="tag">실사용자 파악 먼저</span>
+    <span class="tag tag-yellow">트래킹 체계 확정</span>
+    <span class="tag tag-red">토요일 설치 세션 P0</span>
+  </div>
+</div>
+
+</body>
+</html>
