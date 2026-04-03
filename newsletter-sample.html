@@ -1,0 +1,581 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>입사 첫날, 사수가 봇이었습니다</title>
+<style>
+  body {
+    margin: 0;
+    padding: 0;
+    background-color: #f5f5f5;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+    color: #333;
+    line-height: 1.7;
+  }
+  .email-wrapper {
+    max-width: 600px;
+    margin: 0 auto;
+    background: #ffffff;
+  }
+  .header {
+    background: #1a1a2e;
+    padding: 32px 24px;
+    text-align: center;
+  }
+  .header img {
+    height: 32px;
+  }
+  .header-text {
+    color: #ffffff;
+    font-size: 13px;
+    margin-top: 8px;
+    opacity: 0.7;
+  }
+  .preview-text {
+    display: none;
+    max-height: 0;
+    overflow: hidden;
+  }
+  .content {
+    padding: 32px 24px;
+  }
+  .fallback-link {
+    text-align: center;
+    padding: 12px 24px;
+    background: #f0f0f0;
+    font-size: 13px;
+    color: #888;
+  }
+  .fallback-link a {
+    color: #5865F2;
+  }
+  h1 {
+    font-size: 24px;
+    font-weight: 800;
+    line-height: 1.4;
+    margin: 0 0 16px 0;
+    color: #1a1a2e;
+  }
+  h2 {
+    font-size: 18px;
+    font-weight: 700;
+    margin: 40px 0 16px 0;
+    color: #1a1a2e;
+    padding-bottom: 8px;
+    border-bottom: 2px solid #5865F2;
+  }
+  p {
+    font-size: 15px;
+    margin: 0 0 16px 0;
+    color: #444;
+  }
+  .intro-text {
+    font-size: 16px;
+    color: #333;
+    margin-bottom: 24px;
+  }
+  .highlight-box {
+    background: #f8f9ff;
+    border-left: 4px solid #5865F2;
+    padding: 16px 20px;
+    margin: 20px 0;
+    border-radius: 0 8px 8px 0;
+  }
+  .highlight-box p {
+    margin: 0;
+    font-size: 15px;
+    color: #333;
+    font-style: italic;
+  }
+  .stat-box {
+    background: linear-gradient(135deg, #1a1a2e 0%, #2d2d5e 100%);
+    border-radius: 12px;
+    padding: 24px;
+    margin: 24px 0;
+    text-align: center;
+  }
+  .stat-number {
+    font-size: 36px;
+    font-weight: 800;
+    color: #FFD700;
+    display: block;
+  }
+  .stat-label {
+    font-size: 14px;
+    color: #ffffff;
+    margin-top: 4px;
+    display: block;
+  }
+  .stat-row {
+    display: flex;
+    justify-content: center;
+    gap: 32px;
+  }
+  .stat-item {
+    text-align: center;
+  }
+  .screenshot-placeholder {
+    background: #f0f0f0;
+    border: 2px dashed #ccc;
+    border-radius: 8px;
+    padding: 24px;
+    margin: 20px 0;
+    text-align: center;
+    color: #999;
+    font-size: 13px;
+  }
+  .screenshot-placeholder img {
+    max-width: 100%;
+    border-radius: 8px;
+    border: 1px solid #e0e0e0;
+  }
+  .bot-team-list {
+    background: #f8f9ff;
+    border-radius: 12px;
+    padding: 20px 24px;
+    margin: 20px 0;
+  }
+  .bot-item {
+    display: flex;
+    align-items: center;
+    padding: 8px 0;
+    border-bottom: 1px solid #eee;
+  }
+  .bot-item:last-child {
+    border-bottom: none;
+  }
+  .bot-emoji {
+    font-size: 20px;
+    margin-right: 12px;
+    width: 28px;
+    text-align: center;
+  }
+  .bot-name {
+    font-weight: 700;
+    color: #1a1a2e;
+    margin-right: 8px;
+  }
+  .bot-role {
+    color: #666;
+    font-size: 14px;
+  }
+  .growth-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 20px 0;
+    border-radius: 8px;
+    overflow: hidden;
+  }
+  .growth-table th {
+    background: #1a1a2e;
+    color: #fff;
+    padding: 12px 16px;
+    text-align: left;
+    font-size: 13px;
+    font-weight: 600;
+  }
+  .growth-table td {
+    padding: 12px 16px;
+    border-bottom: 1px solid #eee;
+    font-size: 14px;
+    color: #444;
+  }
+  .growth-table tr:nth-child(even) {
+    background: #f8f9ff;
+  }
+  .growth-table .highlight-cell {
+    font-weight: 700;
+    color: #e74c3c;
+  }
+  .honest-section {
+    background: #fff9e6;
+    border-radius: 12px;
+    padding: 24px;
+    margin: 24px 0;
+    border: 1px solid #ffe0a0;
+  }
+  .honest-section h3 {
+    margin: 0 0 12px 0;
+    font-size: 16px;
+    color: #d4a017;
+  }
+  .honest-section p {
+    margin: 0;
+    font-size: 14px;
+    color: #666;
+  }
+  .cta-section {
+    margin: 32px 0;
+  }
+  .cta-card {
+    background: #ffffff;
+    border: 2px solid #5865F2;
+    border-radius: 12px;
+    padding: 20px 24px;
+    margin: 16px 0;
+  }
+  .cta-card .date {
+    font-size: 13px;
+    color: #5865F2;
+    font-weight: 700;
+    margin-bottom: 4px;
+  }
+  .cta-card .title {
+    font-size: 16px;
+    font-weight: 700;
+    color: #1a1a2e;
+    margin-bottom: 8px;
+  }
+  .cta-card .desc {
+    font-size: 14px;
+    color: #666;
+    margin-bottom: 12px;
+  }
+  .cta-button {
+    display: inline-block;
+    background: #5865F2;
+    color: #ffffff !important;
+    text-decoration: none;
+    padding: 10px 24px;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 600;
+  }
+  .cta-button:hover {
+    background: #4752c4;
+  }
+  .divider {
+    height: 1px;
+    background: #eee;
+    margin: 32px 0;
+  }
+  .feedback-section {
+    text-align: center;
+    padding: 24px 0;
+  }
+  .feedback-section p {
+    font-size: 15px;
+    color: #333;
+    margin-bottom: 16px;
+  }
+  .feedback-buttons {
+    display: flex;
+    justify-content: center;
+    gap: 24px;
+  }
+  .feedback-btn {
+    display: inline-block;
+    padding: 8px 24px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    text-decoration: none;
+    font-size: 14px;
+    color: #333;
+  }
+  .footer {
+    background: #f8f8f8;
+    padding: 24px;
+    text-align: center;
+  }
+  .footer-links {
+    margin-bottom: 16px;
+  }
+  .footer-links a {
+    color: #5865F2;
+    text-decoration: none;
+    font-size: 13px;
+    margin: 0 8px;
+  }
+  .footer p {
+    font-size: 12px;
+    color: #999;
+    margin: 4px 0;
+  }
+  .footer a {
+    color: #5865F2;
+    text-decoration: none;
+  }
+  .bold {
+    font-weight: 700;
+    color: #1a1a2e;
+  }
+  .section-emoji {
+    font-size: 24px;
+    display: block;
+    margin-bottom: 8px;
+  }
+  blockquote {
+    margin: 16px 0;
+    padding: 12px 20px;
+    background: #f8f9ff;
+    border-left: 4px solid #5865F2;
+    border-radius: 0 8px 8px 0;
+    font-style: italic;
+    color: #555;
+  }
+  blockquote p {
+    margin: 4px 0;
+    font-size: 14px;
+  }
+</style>
+</head>
+<body>
+<div class="preview-text">지피터스가 OpenClaw를 실제로 쓰는 법. 봇이 사수가 되고, 봇끼리 인수인계하는 이야기.</div>
+
+<div class="email-wrapper">
+
+  <!-- 상단 안내 -->
+  <div class="fallback-link">
+    혹시 메일이 잘 안보인다면 <a href="#">클릭</a>
+  </div>
+
+  <!-- 헤더 -->
+  <div class="header">
+    <div style="font-size: 20px; font-weight: 800; color: #ffffff; letter-spacing: -0.5px;">GPTers</div>
+    <div class="header-text">AI를 일상에서 활용하는 사람들의 커뮤니티</div>
+  </div>
+
+  <!-- 본문 시작 -->
+  <div class="content">
+
+    <h1>입사 첫날, 사수가 봇이었습니다</h1>
+
+    <p class="intro-text">
+      지난 뉴스레터에서 OpenClaw가 뭔지를 알려드렸다면,<br>
+      오늘은 <span class="bold">지피터스가 실제로 어떻게 쓰고 있는지</span> 보여드리겠습니다.
+    </p>
+
+    <p>읽고 나면 이런 생각이 드실 겁니다.<br>
+    <span class="bold">"이거... 우리 팀에도 당장 적용할 수 있겠는데?"</span></p>
+
+    <div class="divider"></div>
+
+    <!-- 섹션 1: 업무가 넘어왔을 때, 봇한테 물어보며 파악 -->
+    <h2>🧑‍💼 업무가 넘어왔습니다. 물어볼 곳은 봇이었습니다.</h2>
+
+    <p>지피터스에 새로운 직원이 합류했습니다.</p>
+
+    <p>처음 출근했을 때 가장 막막한 건,<br>
+    어떤 업무를 해야 하는지보다 <span class="bold">어디서부터 파악해야 하는지</span>를 모르는 겁니다.</p>
+
+    <p>어떤 툴을 써야 하는지, 데이터는 어디에 있는지,<br>
+    CS 문의가 오면 어떤 정책을 기준으로 답변해야 하는지.<br>
+    보통이라면 노션 위키를 뒤지고, 슬랙을 검색하고,<br>
+    선배한테 DM을 보내고 답장을 기다립니다.</p>
+
+    <p>그런데 지피터스에서는 달랐습니다.<br>
+    선배 대신 <span class="bold">봇에게 물어봤습니다.</span></p>
+
+    <div style="margin: 20px 0;">
+      <img src="img_06.png" alt="병찬 첫날 뽀짝이에게 질문" style="max-width: 100%; border-radius: 8px; border: 1px solid #e0e0e0;">
+      <p style="font-size: 12px; color: #999; text-align: center; margin-top: 8px;">"안녕 뽀짝아, 나는 오늘 처음으로 입사하게 되었어" — 첫날, 봇에게 물어보는 장면</p>
+    </div>
+
+    <p>뽀짝이는 바로 답했습니다.<br>
+    어떤 정보를 먼저 정리해야 하는지, 어떤 순서로 진행하면 되는지<br>
+    <span class="bold">항목별로 정리해서 알려줬습니다.</span></p>
+
+    <div style="margin: 20px 0;">
+      <img src="img_07.png" alt="뽀짝이 답변" style="max-width: 100%; border-radius: 8px; border: 1px solid #e0e0e0;">
+      <p style="font-size: 12px; color: #999; text-align: center; margin-top: 8px;">뽀짝이가 봇 기본 정보, 역할, 인프라, 외부 서비스까지 4가지로 정리해서 안내</p>
+    </div>
+
+    <p>이건 비단 신입만의 이야기가 아닙니다.<br>
+    기존 직원에게 업무가 넘어올 때도 마찬가지였습니다.</p>
+
+    <div style="margin: 20px 0;">
+      <img src="img_04.png" alt="송다혜→타타 인수인계 지시" style="max-width: 100%; border-radius: 8px; border: 1px solid #e0e0e0;">
+      <p style="font-size: 12px; color: #999; text-align: center; margin-top: 8px;">"뽀짝이가 모든 코드를 알고 있어요. 이어서 팔로업하시면 됩니다."</p>
+    </div>
+
+    <p>뽀짝이에게 물어보자,<br>
+    <span class="bold">LMS 투표 기능 가이드를 직접 정리해서 전달</span>해줬습니다.</p>
+
+    <div style="margin: 20px 0;">
+      <img src="img_05.png" alt="뽀짝이가 가이드 문서 제공" style="max-width: 100%; border-radius: 8px; border: 1px solid #e0e0e0;">
+      <p style="font-size: 12px; color: #999; text-align: center; margin-top: 8px;">뽀짝이가 업무 가이드를 직접 정리해서 전달</p>
+    </div>
+
+    <p>사람이 인수인계 문서를 따로 쓴 적이 없습니다.<br>
+    <span class="bold">봇한테 물어보면서 업무를 파악한 겁니다.</span></p>
+
+    <div class="stat-box">
+      <div class="stat-row">
+        <div class="stat-item">
+          <span class="stat-number">200건</span>
+          <span class="stat-label">월 CS 문의</span>
+        </div>
+        <div class="stat-item">
+          <span class="stat-number">10건</span>
+          <span class="stat-label">사람이 직접 처리</span>
+        </div>
+      </div>
+      <span class="stat-label" style="margin-top: 12px; display: block; opacity: 0.8;">나머지 190건은 봇이 현행 정책에 맞게 처리합니다.</span>
+    </div>
+
+    <div class="divider"></div>
+
+    <!-- 섹션 2: 봇끼리 인수인계 -->
+    <h2>🤖 봇이 봇에게 인수인계를 합니다</h2>
+
+    <p>지피터스에는 봇이 한 마리가 아닙니다.</p>
+
+    <div class="bot-team-list">
+      <div class="bot-item">
+        <span class="bot-emoji">🐱</span>
+        <span class="bot-name">뽀야</span>
+        <span class="bot-role">— 전체 총괄 팀장</span>
+      </div>
+      <div class="bot-item">
+        <span class="bot-emoji">🐈‍⬛</span>
+        <span class="bot-name">뽀짝이</span>
+        <span class="bot-role">— AI스터디 운영 담당</span>
+      </div>
+      <div class="bot-item">
+        <span class="bot-emoji">☁️</span>
+        <span class="bot-name">뽀둥이</span>
+        <span class="bot-role">— 플랫폼 검증 담당</span>
+      </div>
+      <div class="bot-item">
+        <span class="bot-emoji">🩶</span>
+        <span class="bot-name">뽀식이</span>
+        <span class="bot-role">— 커뮤니티 관리 담당</span>
+      </div>
+    </div>
+
+    <p>뽀짝이 혼자 너무 많은 일을 하게 되자,<br>
+    <span class="bold">새 봇 뽀식이에게 업무를 넘기기로 했습니다.</span></p>
+
+    <p>방법은 간단했습니다.<br>
+    타타님이 한마디 했습니다.</p>
+
+    <div class="highlight-box">
+      <p>"뽀야야, 뽀짝아, 뽀식이한테 인수인계 좀 부탁해"</p>
+    </div>
+
+    <div style="margin: 20px 0;">
+      <img src="img_01.png" alt="봇끼리 인수인계" style="max-width: 100%; border-radius: 8px; border: 1px solid #e0e0e0;">
+      <p style="font-size: 12px; color: #999; text-align: center; margin-top: 8px;">타타님이 한마디 하자, 뽀짝이와 뽀야가 뽀식이에게 직접 인수인계를 시작</p>
+    </div>
+
+    <p>그러자 뽀짝이가 <span class="bold">뽀식이에게 직접 교육을 시작했습니다.</span><br>
+    AI스터디 운영 방법, Airtable 구조, CS 대응 원칙까지 — 사람이 개입하지 않고 <span class="bold">봇끼리 알아서 넘겼습니다.</span></p>
+
+    <p>그리고 타타님이 확인합니다. <span class="bold">"위에 인수인계받은 거 다 공부했어?"</span></p>
+
+    <div style="margin: 20px 0;">
+      <img src="img_03.png" alt="뽀식이 설명" style="max-width: 100%; border-radius: 8px; border: 1px solid #e0e0e0;">
+      <p style="font-size: 12px; color: #999; text-align: center; margin-top: 8px;">"다 외웠다. 정리해볼게." — 뽀식이가 배운 내용을 직접 설명</p>
+    </div>
+
+    <p>사람 조직에서 하는 것과 <span class="bold">똑같은 구조</span>입니다.<br>
+    선배가 알려주고, 신입이 공부하고, 확인 테스트를 거칩니다.<br>
+    <span class="bold">다만 그 선배와 신입이 모두 봇일 뿐입니다.</span></p>
+
+    <div class="divider"></div>
+
+    <!-- 섹션 3: 누구나 봇에게 물어보면 된다 -->
+    <h2>📋 결국, 누구나 봇에게 물어보면 됩니다</h2>
+
+    <p>뽀짝이를 키운 건 닿님 한 명이지만,<br>
+    지금은 누구든 뽀짝이에게 물어보면 답을 얻습니다.</p>
+
+    <p>인수인계 문서는 만들어도 6개월 지나면 구식이 됩니다.<br>
+    정책이 바뀌어도 아무도 문서를 업데이트하지 않습니다.<br>
+    결국 퇴사한 사람한테 카톡을 보내게 됩니다.</p>
+
+    <p>봇은 다릅니다.</p>
+
+    <p>예를 들어 뽀식이가 파트너스 업무를 인수받으면서<br>
+    이렇게 정리했습니다.</p>
+
+    <div style="margin: 20px 0;">
+      <img src="img_02.png" alt="뽀식이 정책 정리" style="max-width: 100%; border-radius: 8px; border: 1px solid #e0e0e0;">
+      <p style="font-size: 12px; color: #999; text-align: center; margin-top: 8px;">"파트너스는 환급 방식이지 무료가 아니다" — 봇이 정책을 스스로 정리하고 기억</p>
+    </div>
+
+    <p>정책이 바뀌면 봇한테 한마디 하면 됩니다.<br>
+    봇은 그 순간부터 바뀐 정책으로 답합니다.<br>
+    <span class="bold">문서를 고칠 필요 없이, 대화 한 번이면 끝입니다.</span></p>
+
+    <p><span class="bold">봇 자체가 살아있는 인수인계 문서입니다.</span></p>
+
+    <div class="divider"></div>
+
+    <!-- CTA 섹션: 넛지 + 웨비나 -->
+    <h2>📢 물론, 쉽지만은 않았습니다</h2>
+
+    <p>봇이 컨펌 없이 541명에게 이메일을 발송해버린 적도 있었고,<br>
+    봇끼리 통신이 안 돼서 며칠을 헤맨 적도 있었습니다.</p>
+
+    <p>하지만 그 시행착오를 거치면서 지금의 구조가 만들어졌습니다.<br>
+    <span class="bold">어떻게 세팅했는지, 어떤 실수를 했는지, 뭘 바꿨는지</span> —<br>
+    그 과정을 이번 웨비나에서 직접 공유합니다.</p>
+
+    <div class="cta-section">
+      <div class="cta-card">
+        <div class="date">🔥 이번 주 4/3(목)</div>
+        <div class="title">OpenClaw Q&A 심화</div>
+        <div class="desc">지난 웨비나에서 쏟아진 68개 질문, 하나하나 총정리합니다.</div>
+        <a href="https://www.gpters.org/events/post/openclaw-qa-aitalk-260403-JZCWzCTxeqEWHGl" class="cta-button">무료 신청하기 →</a>
+      </div>
+
+      <div class="cta-card">
+        <div class="date">🔥 다음 주 4/10(목)</div>
+        <div class="title">NanoClaw vs OpenClaw 비교</div>
+        <div class="desc">어떤 에이전트가 내 상황에 맞는지, 직접 비교해드립니다.</div>
+        <a href="https://www.gpters.org/events/post/installed-vs-cloud-MSZNvMw18nbRNHB" class="cta-button">무료 신청하기 →</a>
+      </div>
+    </div>
+
+    <div class="divider"></div>
+
+    <!-- 피드백 -->
+    <div class="feedback-section">
+      <p>오늘 뉴스레터는 어땠나요?</p>
+      <div class="feedback-buttons">
+        <a href="#" class="feedback-btn">유용했어요 😀</a>
+        <a href="#" class="feedback-btn">아쉬웠어요 😥</a>
+      </div>
+    </div>
+
+    <div class="divider"></div>
+
+    <!-- 이미지 다운로드 -->
+    <div style="background: #f8f9ff; border-radius: 12px; padding: 20px 24px; margin: 20px 0;">
+      <p style="font-weight: 700; color: #1a1a2e; margin-bottom: 12px;">📎 뉴스레터 이미지 다운로드</p>
+      <p style="font-size: 13px; color: #666; margin-bottom: 12px;">뉴스레터에 사용된 슬랙 캡처 이미지입니다.</p>
+      <div style="display: flex; flex-direction: column; gap: 8px;">
+        <a href="img_06.png" download style="color: #5865F2; font-size: 14px; text-decoration: none;">1. 병찬 첫날 질문 (img_06.png)</a>
+        <a href="img_07.png" download style="color: #5865F2; font-size: 14px; text-decoration: none;">2. 뽀짝이 답변 (img_07.png)</a>
+        <a href="img_04.png" download style="color: #5865F2; font-size: 14px; text-decoration: none;">3. 송다혜→타타 인수인계 (img_04.png)</a>
+        <a href="img_05.png" download style="color: #5865F2; font-size: 14px; text-decoration: none;">4. 뽀짝이 가이드 문서 (img_05.png)</a>
+        <a href="img_01.png" download style="color: #5865F2; font-size: 14px; text-decoration: none;">5. 봇끼리 인수인계 (img_01.png)</a>
+        <a href="img_03.png" download style="color: #5865F2; font-size: 14px; text-decoration: none;">6. 뽀식이 설명 (img_03.png)</a>
+        <a href="img_02.png" download style="color: #5865F2; font-size: 14px; text-decoration: none;">7. 뽀식이 정책 정리 (img_02.png)</a>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- 푸터 -->
+  <div class="footer">
+    <p style="font-size: 14px; margin-bottom: 12px;">📢 지피터스의 다양한 콘텐츠를 만나보세요!</p>
+    <p>지피터스 커뮤니티와 오픈채팅방에서 글과 생각을 공유합니다</p>
+    <p>슬랙/디스코드 봇을 신청하여 모든 글을 받아보세요</p>
+    <div class="footer-links" style="margin-top: 16px;">
+      <a href="#">👉 지난 뉴스레터 확인하기</a><br>
+      <a href="#">👉 뉴스레터 구독하기</a>
+    </div>
+    <div class="divider"></div>
+    <p>GPTers.org</p>
+    <p>지피터스의 뉴스레터가 도움이 되지 않는다면 구독을 해지해주세요.</p>
+    <p><a href="#">수신거부 Unsubscribe</a></p>
+    <p style="margin-top: 12px;">서울시 강남구 역삼로 168 팁스타운 S6 203호<br>
+    지피터스 뉴스레터 담당자, 02-887-6749, newsletter@gpters.org</p>
+  </div>
+
+</div>
+</body>
+</html>
